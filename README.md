@@ -5,8 +5,29 @@ MacroGenXGPT is an Python-based LLM using Retrieval Augmented Generation (RAG) f
 
 Install dependencies:
 
+## Create a new conda environment (Recommended)
+This is the cleanest approach and avoids conflicts with your existing environment:
+
 ```bash
+# Create new environment with Python 3.10 (better compatibility)
+conda create -n rag_env python=3.10
+
+# Activate it
+conda activate rag_env
+
+# Install packages
 pip install requests beautifulsoup4 sentence-transformers faiss-cpu openai python-dotenv
+```
+
+Then in VSCode:
+
+Press Cmd+Shift+P (Mac) or Ctrl+Shift+P (Windows)
+Type "Python: Select Interpreter"
+Choose the rag_env environment
+
+Then verify it worked:
+```bash
+python -c "import sentence_transformers; print('Success!')"
 ```
 
 Set your OpenAI API key:
