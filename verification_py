@@ -1,0 +1,14 @@
+# test_imports.py
+import numpy as np
+import torch
+from sentence_transformers import SentenceTransformer
+
+print(f"NumPy version: {np.__version__}")
+print(f"PyTorch version: {torch.__version__}")
+print(f"NumPy < 2.0: {np.__version__.startswith('1.')}")
+
+# Test sentence transformers
+model = SentenceTransformer('all-MiniLM-L6-v2')
+embedding = model.encode("Test sentence")
+print(f"Embedding shape: {embedding.shape}")
+print("✓ Everything working!")

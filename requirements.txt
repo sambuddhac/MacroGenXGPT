@@ -1,0 +1,6 @@
+# requirements.txt
+numpy<2
+requests
+beautifulsoup4
+sentence-transformers
+faiss-cpu
