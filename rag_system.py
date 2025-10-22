@@ -7,6 +7,12 @@ pip install requests beautifulsoup4 sentence-transformers faiss-cpu openai pytho
 Set your OpenAI API key as environment variable: OPENAI_API_KEY
 """
 
+# Install the Portkey AI Gateway SDK with pip
+#   pip -i portkey-ai
+# 
+# For more information on the SDK see https://portkey.ai/docs/api-reference/sdk/python
+# 
+
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -15,7 +21,18 @@ import faiss
 import numpy as np
 from typing import List, Tuple
 import pickle
-from openai import OpenAI
+# from openai import OpenAI
+from portkey_ai import Portkey
+from dotenv import load_dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Before executing this code, define the API Key within an enironment variable in your OS
+# Linux BASH example: export AI_SANDBOX_KEY=<key provided to you>
+
+# Import API key from OS environment variables
+AI_SANDBOX_KEY = os.getenv("AI_SANDBOX_KEY")
 
 class DocumentationRAG:
     def __init__(self, embedding_model='all-MiniLM-L6-v2'):
@@ -24,7 +41,7 @@ class DocumentationRAG:
         self.documents = []
         self.embeddings = None
         self.index = None
-        self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        self.client = Portkey(api_key=AI_SANDBOX_KEY)
         
     def scrape_documentation(self, base_url: str, max_pages: int = 50) -> List[dict]:
         """Scrape documentation pages from a given base URL."""

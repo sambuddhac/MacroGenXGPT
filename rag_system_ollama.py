@@ -182,7 +182,7 @@ class DocumentationRAG:
         
         return results
     
-    def answer_query(self, query: str, top_k: int = 5, stream: bool = True) -> str:
+    def answer_query(self, query: str, top_k: int = 5, stream: bool = True, verbose: bool = False) -> str:
         """
         Answer a query using RAG with Ollama.
         
@@ -190,34 +190,60 @@ class DocumentationRAG:
             query: User's question
             top_k: Number of documents to retrieve
             stream: If True, print response as it's generated
+            verbose: If True, show retrieved context and relevance scores
         """
         # Retrieve relevant documents
         results = self.retrieve(query, top_k)
         
-        # Build context
-        context = "\n\n".join([
-            f"[Source: {doc['package']} - {doc['source']}]\n{doc['text']}" 
-            for doc, _ in results
-        ])
+        # Show what was retrieved (debugging)
+        if verbose:
+            print("\n" + "="*80)
+            print("RETRIEVED CONTEXT:")
+            print("="*80)
+            for i, (doc, score) in enumerate(results, 1):
+                print(f"\n[{i}] Relevance Score: {score:.4f}")
+                print(f"Source: {doc['package']} - {doc['source']}")
+                print(f"Text preview: {doc['text'][:200]}...")
+            print("="*80 + "\n")
         
-        # Generate answer using Ollama
-        prompt = f"""You are a helpful assistant answering questions about MacroEnergy.jl and GenX.jl Julia packages.
+        # Build context with better formatting
+        context_parts = []
+        for i, (doc, score) in enumerate(results, 1):
+            context_parts.append(f"[Context {i} - {doc['package']}]:\n{doc['text']}")
+        
+        context = "\n\n---\n\n".join(context_parts)
+        
+        # Improved prompt with better instructions
+        prompt = f"""You are an expert assistant specializing in Julia energy modeling packages (MacroEnergy.jl and GenX.jl).
 
-Context from documentation:
+CONTEXT FROM DOCUMENTATION:
 {context}
 
-Question: {query}
+USER QUESTION: {query}
 
-Please provide a clear and accurate answer based on the context above. If the context doesn't contain enough information, say so."""
+INSTRUCTIONS:
+1. Answer the question directly using ONLY information from the context above
+2. Be specific and cite which package/feature you're referring to
+3. If the context contains the answer, provide it confidently with details
+4. If the context is insufficient, briefly state what's missing
+5. Do NOT repeat yourself - give the answer once clearly
+6. Do NOT make assumptions beyond what's in the context
 
-        # Call Ollama API
+ANSWER:"""
+
+        # Call Ollama API with improved parameters
         payload = {
             "model": self.ollama_model,
             "prompt": prompt,
             "stream": stream,
             "options": {
-                "temperature": 0.3,
+                "temperature": 0.2,      # Lower = more focused
                 "top_p": 0.9,
+                "top_k": 40,
+                "repeat_penalty": 1.2,   # Penalize repetition
+                "num_predict": 500,      # Limit response length
+                "num_ctx": 4096,         # Context window
+                "stop": ["USER QUESTION:", "CONTEXT FROM"],  # Stop tokens
             }
         }
         
