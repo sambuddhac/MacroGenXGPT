@@ -55,6 +55,11 @@ rag.load('energy_packages_rag.pkl')
 answer = rag.answer_query("How do I configure temporal resolution in GenX?")
 print(answer)
 ```
+Or, alternatively, run the following script:
+
+```bash
+python test_openai_rag.py
+```
 ## Customization Options:
 
 - **Change LLM:** Replace OpenAI with local models (Ollama, LlamaCpp)
