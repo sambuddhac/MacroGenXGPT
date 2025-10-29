@@ -1,0 +1,75 @@
+# Vector Index Auto-Update Scheduler Configuration
+
+# Update Schedule
+schedule:
+  # Update frequency: weekly
+  # Day of week: monday (0=Monday, 6=Sunday)
+  day_of_week: 0
+  # Time of day (24-hour format)
+  hour: 2
+  minute: 0
+  timezone: 'UTC'
+
+# Vector Index Configuration
+vector_index:
+  # Output file path
+  output_path: 'energy_packages_rag.pkl'
+
+  # Documentation URLs to scrape
+  documentation_urls:
+    - 'https://macroenergy.github.io/MacroEnergy.jl/stable/'
+    - 'https://genxproject.github.io/GenX.jl/stable/'
+
+  # Maximum pages to scrape per URL
+  max_pages: 50
+
+  # Embedding model
+  embedding_model: 'all-MiniLM-L6-v2'
+
+  # LLM backend: 'ollama' or 'openai'
+  llm_backend: 'ollama'
+
+  # Ollama configuration (only used if llm_backend='ollama')
+  ollama:
+    model: 'llama3.2'
+    endpoint: 'http://localhost:11434'
+
+  # Text chunking parameters
+  chunk_size: 500
+  chunk_overlap: 50
+
+# Logging Configuration
+logging:
+  # Log file path
+  log_file: 'scheduler.log'
+
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: 'INFO'
+
+  # Keep logs for how many days
+  retention_days: 30
+
+  # Enable console output
+  console_output: true
+
+# Backup Configuration
+backup:
+  # Enable automatic backups before updating
+  enabled: true
+
+  # Backup directory
+  backup_dir: 'backups'
+
+  # Keep backups for how many days
+  retention_days: 30
+
+# Error Handling
+error_handling:
+  # Retry attempts on failure
+  max_retries: 3
+
+  # Retry delay in seconds
+  retry_delay: 300
+
+  # Send notification on failure (requires notification service setup)
+  notify_on_failure: false

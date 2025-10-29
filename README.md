@@ -481,6 +481,178 @@ answer = response.json()['response']
 
 ---
 
+## Automatic Vector Index Updates
+
+MacroGenXGPT includes an automatic scheduler that updates the vector index at regular intervals (default: weekly). This ensures your RAG system always has the latest documentation without manual intervention.
+
+### Quick Start
+
+1. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Configure the scheduler**:
+   Edit `scheduler_config.yaml` to customize:
+   - Update schedule (day, time, timezone)
+   - Documentation URLs to scrape
+   - Backup settings
+   - Logging preferences
+
+3. **Run the scheduler**:
+
+   **Option A: Run directly (for testing)**:
+   ```bash
+   python vector_index_scheduler.py
+   ```
+
+   **Option B: Install as a system service** (recommended):
+   ```bash
+   # Install the service
+   ./setup_scheduler.sh install
+
+   # Start the scheduler
+   ./setup_scheduler.sh start
+
+   # Enable to start on boot
+   ./setup_scheduler.sh enable
+
+   # Check status
+   ./setup_scheduler.sh status
+
+   # View logs
+   ./setup_scheduler.sh logs
+   ```
+
+### Configuration
+
+The `scheduler_config.yaml` file controls all aspects of the auto-update system:
+
+```yaml
+# Update Schedule
+schedule:
+  day_of_week: 0        # 0=Monday, 6=Sunday
+  hour: 2               # 24-hour format
+  minute: 0
+  timezone: 'UTC'
+
+# Vector Index Settings
+vector_index:
+  output_path: 'energy_packages_rag.pkl'
+  documentation_urls:
+    - 'https://macroenergy.github.io/MacroEnergy.jl/stable/'
+    - 'https://genxproject.github.io/GenX.jl/stable/'
+  max_pages: 50
+  embedding_model: 'all-MiniLM-L6-v2'
+  llm_backend: 'ollama'  # or 'openai'
+
+# Backup Configuration
+backup:
+  enabled: true
+  backup_dir: 'backups'
+  retention_days: 30
+```
+
+### Command Line Usage
+
+```bash
+# Run an immediate update (without scheduling)
+python vector_index_scheduler.py --now
+
+# Show next scheduled run time
+python vector_index_scheduler.py --show-next
+
+# Use custom config file
+python vector_index_scheduler.py --config my_config.yaml
+
+# Get help
+python vector_index_scheduler.py --help
+```
+
+### Service Management
+
+The `setup_scheduler.sh` script provides easy management:
+
+```bash
+./setup_scheduler.sh install    # Install as systemd user service
+./setup_scheduler.sh start      # Start the scheduler
+./setup_scheduler.sh stop       # Stop the scheduler
+./setup_scheduler.sh restart    # Restart the scheduler
+./setup_scheduler.sh status     # Check service status
+./setup_scheduler.sh logs       # View logs (Ctrl+C to exit)
+./setup_scheduler.sh enable     # Enable auto-start on boot
+./setup_scheduler.sh disable    # Disable auto-start on boot
+./setup_scheduler.sh uninstall  # Remove the service
+```
+
+### Features
+
+- **Automatic Weekly Updates**: Keeps your vector index current with latest documentation
+- **Backup Management**: Creates timestamped backups before each update
+- **Error Handling**: Automatic retry on failure with exponential backoff
+- **Comprehensive Logging**: All operations logged to file and console
+- **Flexible Scheduling**: Configure update frequency, time, and timezone
+- **Multiple LLM Backends**: Supports both Ollama and OpenAI
+- **Zero Downtime**: Old index remains available during updates
+
+### Monitoring
+
+Check the scheduler logs:
+
+```bash
+# View log file
+tail -f scheduler.log
+
+# Or use systemd journal (if running as service)
+./setup_scheduler.sh logs
+```
+
+Log entries include:
+- Update start/completion times
+- Number of documents indexed
+- Backup creation status
+- Errors and retry attempts
+- Performance metrics
+
+### Backup Management
+
+Backups are automatically created before each update:
+
+```
+backups/
+├── energy_packages_rag_20250129_020000.pkl
+├── energy_packages_rag_20250129_020000.pkl.faiss
+├── energy_packages_rag_20250122_020000.pkl
+└── energy_packages_rag_20250122_020000.pkl.faiss
+```
+
+Old backups are automatically cleaned based on `retention_days` setting.
+
+### Troubleshooting
+
+**Scheduler not starting?**
+```bash
+# Check if service is running
+./setup_scheduler.sh status
+
+# View recent logs for errors
+tail -20 scheduler.log
+```
+
+**Update failures?**
+- Check internet connectivity
+- Verify documentation URLs are accessible
+- Ensure sufficient disk space
+- Review logs for specific error messages
+
+**Want to test without scheduling?**
+```bash
+# Run an immediate one-time update
+python vector_index_scheduler.py --now
+```
+
+---
+
 ## Next Steps
 
 Once you have Ollama working:
