@@ -362,6 +362,9 @@ Examples:
             minute = schedule_config.get('minute', 0)
             timezone = schedule_config.get('timezone', 'UTC')
 
+            if not isinstance(day_of_week, int) or not (0 <= day_of_week < len(day_names)):
+                print(f"Error: day_of_week value '{day_of_week}' is out of range (0-6).", file=sys.stderr)
+                sys.exit(1)
             print(f"Next update: Every {day_names[day_of_week]} at {hour:02d}:{minute:02d} {timezone}")
         else:
             scheduler.start()
