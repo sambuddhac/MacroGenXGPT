@@ -6,7 +6,6 @@ This module provides automatic weekly updates for the vector index.
 It uses APScheduler to run periodic updates based on configuration.
 """
 
-import os
 import sys
 import logging
 import shutil
