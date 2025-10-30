@@ -589,7 +589,7 @@ The `setup_scheduler.sh` script provides easy management:
 
 - **Automatic Weekly Updates**: Keeps your vector index current with latest documentation
 - **Backup Management**: Creates timestamped backups before each update
-- **Error Handling**: Automatic retry on failure with exponential backoff
+- **Error Handling**: Automatic retry on failure with fixed delay
 - **Comprehensive Logging**: All operations logged to file and console
 - **Flexible Scheduling**: Configure update frequency, time, and timezone
 - **Multiple LLM Backends**: Supports both Ollama and OpenAI
