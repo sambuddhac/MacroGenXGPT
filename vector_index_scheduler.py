@@ -220,7 +220,7 @@ class VectorIndexScheduler:
                 self.logger.info(f"Documentation URLs: {docs_urls}")
 
                 start_time = time.time()
-                self.rag_system.build_index(docs_urls, max_pages=max_pages)
+                self.rag_system.build_index(docs_urls)
                 elapsed_time = time.time() - start_time
 
                 # Save the index
