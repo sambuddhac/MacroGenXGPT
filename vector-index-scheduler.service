@@ -1,0 +1,18 @@
+[Unit]
+Description=Vector Index Auto-Update Scheduler
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/home/user/MacroGenXGPT
+Environment="PATH=/home/user/miniforge3/envs/macrogenx/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/home/user/miniforge3/envs/macrogenx/bin/python vector_index_scheduler.py --config scheduler_config.yaml
+Restart=on-failure
+RestartSec=60
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vector-index-scheduler
+
+[Install]
+WantedBy=multi-user.target
